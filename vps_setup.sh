@@ -17,4 +17,4 @@ cp BuildTools/spigot-1.15.2.jar server # var
 
 echo "eula=true" > server/eula.txt
 
-mv -t server screen_start.sh start_loop.sh
+mv -t server screen_start.sh startup_loop.sh
