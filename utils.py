@@ -1,30 +1,98 @@
-import sys
-import os
+import argparse
+import yaml
 
 
-def usage(script_name: str, file_name: str, arg: str, problem: str):
-    usage_str = f"{script_name} <path to directory containing {file_name} OR path to {file_name}>"
-    print(f"Usage: {usage_str}\nInstead got: {script_name} {arg}")
-    print(f"{problem}")
-    exit(1)
+def argparse_setup():
+    # type: () -> (argparse.ArgumentParser, argparse.ArgumentParser)
+    parser = argparse.ArgumentParser(description='Bungee Manager')
+
+    parser.add_argument('name', help='Name you want to call the VPS')
+    parser.add_argument('config_definition_path',
+                        help='Path to the config set up in digitalocean_config.yml.'
+                        'Check digitalocean_config.yml.example for examples')
+
+    parser.add_argument('-s', '--sleep-time', type=int,
+                        help="Amount of time between creating the droplet "
+                             "and uploading the files "
+                             "(Allows the droplet to start up)",
+                             default=60)
+    parser.add_argument('-b', '--bungee_name', type=str,
+                        help="Name of the bungee connection as set up in "
+                             "bungee_info.yml ")
+
+    parser.add_argument('-t', '--token',
+                        help="For commands that may only need a token. Unused")
+    parser.add_argument('-y', '--yes', action='store_true',
+                        help="Skips all checks in case of missing arguments")
+
+    args, unknown = parser.parse_known_args()
+
+    wild_parser = argparse.ArgumentParser(description='Bungee Manager/Placeholder arg viewer')
+    for arg in unknown:
+        if arg.startswith(("-", "--")):
+            wild_parser.add_argument(arg)
+
+    wild_args = wild_parser.parse_args(unknown)
+
+    return args, wild_args
 
 
-def validate_file_path(filename: str):
-    args = sys.argv
-    if (len(args)) <= 1:
-        usage(args[0], "", "No argument was given to the utility")
+def missing(_arg, force=False):
+    # type: (str, bool) -> None
+    message = f"You are missing the argument {_arg}."
+    if force:
+        print(f"{message} This argument is required for this operation."
+              " Use help for more info.")
+        exit(1)
 
-    path = args[1]
-    is_dir = os.path.isdir(path)
-    is_file = os.path.isfile(path)
+    consent = ''
+    while consent.lower() not in ('y', 'yes'):
+        consent = input(
+            f"{message} Do you want to continue without setting it?\n(yes/no)")
+        if consent.lower() in ('n', 'no'):
+            exit(0)
 
-    if not (is_dir or is_file):
-        usage(args[0], filename, str(path), f"{path} either doesn't exist, or is some special device file")
 
-    if is_dir:
-        path += f"/{filename}"
+def get_do_config():
+    # type: ()  -> dict
+    with open('digitalocean_config.yml', 'r') as cfg:
+        config = yaml.safe_load(cfg) or {}
+    return config
 
-    if not os.path.isfile(path):
-        usage(args[0], filename, str(path), f"{path} does not exist.")
 
-    return path
+def update_do_config(new_cfg):
+    # type: (dict) -> None
+    with open('digitalocean_config.yml', 'w') as cfg:
+        yaml.dump(new_cfg, cfg)
+
+
+def get_upload_files_for(name):
+    # type: (str) -> list
+    config = get_do_config()
+    server_config = config.get(name) or {}
+    setup = server_config.get('setup') or {}
+    upload_list = setup.get('uploads') or []
+
+    return upload_list
+
+
+def get_commands_to_run_for(name):
+    # type: (str) -> list
+    config = get_do_config()
+
+    server_config = config.get(name) or {}
+    setup = server_config.get('setup') or {}
+    command_list = setup.get('pre_commands') or []
+
+    return command_list
+
+
+def get_script_to_run_for(name):
+    # type: (str) -> str
+    config = get_do_config()
+
+    server_config = config.get(name) or {}
+    setup = server_config.get('setup') or {}
+    script = setup.get('script') or ""
+
+    return script

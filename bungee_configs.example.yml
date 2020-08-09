@@ -1,0 +1,14 @@
+bungee_name:
+  priorities:
+    - lobby
+
+  listeners:
+    host: 0.0.0.0:25565
+    query_port: 25577
+
+  servers:
+    lobby:
+      address: localhost:25577
+      motd: '&1Just another BungeeCord - Forced Host'
+      restricted: false
+

@@ -3,64 +3,30 @@
 #### Running  
 Assuming a brand new server  
 
-First things first:
+First things first:  
 ```sh
 # Clone Repo
-git clone https://github.com/EniMiniGames/MC-Server-VPS-Scripts.git .  
+git clone https://github.com/EniMiniGames/MC-Server-VPS-Scripts.git 
+cd MC-Server-VPS-Scripts
 
-# Move scripts into current working dir
-mv -t . MC-Server-VPS-Scripts/*.sh MC-Server-VPS-Scripts/*.py
+# Install Requirements
+python3 -m pip install -r requirements.txt
 
-# Mark as executable
-chmod +x *.sh *.py  
+# Copy change config file extensions
+mv *.example.yml *.yml
 
-# Install required packages
-./pre_installations.sh
+# Fill out config options in digitalocean_config.yml [See TODO]
 ```  
 
-#### Server Setup  
-```sh  
+## Running  
+```sh
+# Create new Bungee Server on new VPS
+python3 new_bungee {Name, for reference} {Config Definition in digitalocean_config.yml} {OPTIONAL_ARGS}
 
-# Run setup
-# Might take a bit to download/install packages, and run BuildTools
-./server_vps_setup.sh   
-
-cd server  
-
-./start_server_screen.sh  
-# And the server should be up!  
-```  
-
-To view the server console, do 
-`screen -r`  
-
-To exit that hit `Ctrl + A + D` or `Ctrl + A THEN Ctrl + D`  
-
-
-#### BungeeCord  
-Do the instructions above first. Run and stop the server once.
-
-```sh  
-cd ~
-# Setup Bungee stuff
-# These first commands can be skipped if running Bungee on a different server
-./bungee_vps_setup.sh
-mv -t bungee start_bungee_screen.sh bungee_startup_loop.sh
-
-# Edit server properties for Bungee usage
-# *Add localhost arg if running Bungee on same server*
-# This can be skipped if there are no servers running on the host
-
-./set_offline_mode.py server localhost
-./set_server_bungee_mode.py server
-
-cd bungee
-./start_bungee_screen.sh	
-# Ctrl + C to stop
-
-# Run bungee once, then run
-../enable_bungee_ip_forward.py .
-```  
+# Create new server to attach to Bungee
+python3 new_server {Name, for reference} {Config Definition in digitalocean_config.yml} -b {Bungee name, as defined in bungee_info.yml} {OPTIONAL_ARGS}
+# new_server is incomplete
+```
 
 #### TODO  
 
@@ -68,6 +34,6 @@ cd bungee
 - [ ] Comment scripts  
 - [x] spigot.yml, bungeecord: true script
 - [x] Bungee config.yml ip_forward: true script
-- [ ] Use DO API to do all this. Bungee on 512MB server, Lobby on 1GB server, rest on whatever.
-- [ ] Use DO-API in Bungee plugin to spin up new server for each gamemode.
-- [ ] Add to /etc/rc.local 
+- [x] Use DO API to do all this. Bungee on 512MB server, Lobby on 1GB server, rest on whatever.
+- [x] Use DO-API in Bungee plugin to spin up new server for each gamemode.
+- [ ] Config options documentation

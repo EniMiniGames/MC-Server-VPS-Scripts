@@ -1,0 +1,48 @@
+api_info:
+  token: {TOKEN HERE}  # DO-API token
+
+  key_name: {KEY NAME IN DIGITALOCEAN}  # In digitalOcean
+  key_file: {KEYFILE NAME IN ./KEYS}  # In ./keys/
+  # Everything uses the same keyfile. CyberSec 100%
+  # This is just so someone looking at this doesn't yell at me, I know this is bad. Laziness kills.
+
+  default_username: root
+  default_port: 22
+
+bungee:
+  droplet_prefix: BungeeCord-Main
+  droplet_regions: nyc3 # list
+  droplet_image: ubuntu-18-04-x64
+  droplet_size_slug: s-1vcpu-1gb # 500mg
+  droplet_keys: {KEY NAME IN DIGITALOCEAN} # Is this needed lol
+  droplet_tags: {DROPLET TAG} # Change
+  custom_image_id:  # If you want to copy some premade image
+
+  # Pre and post commands?
+  setup: # Can add placeholders like {localhost} or {bungee_ip}
+    pre_commands:
+      - chmod +x *.sh
+      - chmod +x *.py
+    uploads: # from ./scripts/
+      - server.properties
+      - some_py_script.py
+      - some_script.sh
+    script: ./some_py_script.py{message}
+
+minecraft_server:
+  droplet_prefix: Generic-Server
+  droplet_regions: nyc3 # list
+  droplet_image: ubuntu-18-04-x64
+  droplet_size_slug: s-1vcpu-1gb # 2gb
+  droplet_keys: {KEY NAME IN DIGITALOCEAN} # Is this needed lol
+  droplet_tags: {DROPLET TAG} # Change
+  custom_image_id:  # If you want to copy some premade image
+
+  setup:
+    pre_commands:
+      - chmod +x *.py
+    uploads:
+      - server.properties
+      - some_py_script.py
+    script: ./some_py_script.py # Bungee=x arg
+

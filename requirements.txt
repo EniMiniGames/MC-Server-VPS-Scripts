@@ -1,0 +1,4 @@
+python-digitalocean~=1.15.0
+paramiko
+PyYAML
+fabric[future]

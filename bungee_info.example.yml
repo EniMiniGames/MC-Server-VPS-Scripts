@@ -1,0 +1,6 @@
+JumpOff:
+  ip: 0.0.0.0
+  servers:
+    JumpOffLobby:
+      ip: 8.8.8.8
+      port: 0
