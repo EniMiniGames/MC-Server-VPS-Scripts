@@ -13,7 +13,8 @@ cd MC-Server-VPS-Scripts
 python3 -m pip install -r requirements.txt
 
 # Copy change config file extensions
-mv *.example.yml *.yml
+# https://unix.stackexchange.com/a/440791/427069
+rename 's/\.example.yml$/.yml/' *.example.yml
 
 # Fill out config options in digitalocean_config.yml [See TODO]
 ```  
@@ -25,7 +26,6 @@ python3 new_bungee {Name, for reference} {Config Definition in digitalocean_conf
 
 # Create new server to attach to Bungee
 python3 new_server {Name, for reference} {Config Definition in digitalocean_config.yml} -b {Bungee name, as defined in bungee_info.yml} {OPTIONAL_ARGS}
-# new_server is incomplete
 ```
 
 #### TODO  
